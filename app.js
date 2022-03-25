@@ -4,7 +4,7 @@ const { errors } = require('celebrate');
 const cors = require('cors');
 const { createUser, userLogin } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-/* const cardRoutes = require('./routes/cards'); */
+const movieRoutes = require('./routes/movies');
 const userRoutes = require('./routes/users');
 const { ERROR_SERVER } = require('./utils/constants');
 const NotFoundErr = require('./errors/NotFoundErr');
@@ -22,7 +22,7 @@ app.use(requestLogger);
 app.post('/signup', checkUser, createUser);
 app.post('/signin', checkUser, userLogin);
 app.use('/users', auth, userRoutes);
-/* app.use("/cards", auth, cardRoutes); */
+app.use('/movies', auth, movieRoutes);
 
 app.use(auth, () => {
   throw new NotFoundErr('Запрашиваемый ресурс не найден');

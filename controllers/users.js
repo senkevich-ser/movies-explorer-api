@@ -12,20 +12,6 @@ const {
   STATUS_ACCEPTED,
 } = require('../utils/constants');
 
-exports.getUsers = async (req, res, next) => {
-  try {
-    const users = await User.find({});
-    if (!users) {
-      throw new NotFoundErr(
-        'Данные пользователей с такими параметрами не найдены',
-      );
-    }
-    return res.status(STATUS_OK).send(users);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 exports.getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
@@ -65,10 +51,10 @@ exports.createUser = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, about } = req.body;
+    const { name, email } = req.body;
     const updateUser = await User.findByIdAndUpdate(
       req.user._id,
-      { name, about },
+      { name, email },
       {
         new: true,
         runValidators: true,
