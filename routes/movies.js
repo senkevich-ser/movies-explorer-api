@@ -1,6 +1,6 @@
 const movieRoutes = require('express').Router();
-/* const { checkNewCard } = require('../utils/validation');
-const { checkCardId } = require('../utils/validation'); */
+const { checkNewMovie } = require('../utils/validation');
+const { checkMovieId } = require('../utils/validation');
 
 const {
   getMovies,
@@ -9,7 +9,7 @@ const {
 } = require('../controllers/movies');
 
 movieRoutes.get('/', getMovies);
-movieRoutes.post('/', /* checkNewCard, */ createMovie);
-movieRoutes.delete('/:movieId', /* checkCardId, */ deleteMovie);
+movieRoutes.post('/', checkNewMovie, createMovie);
+movieRoutes.delete('/:movieId', checkMovieId, deleteMovie);
 
 module.exports = movieRoutes;

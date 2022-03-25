@@ -8,8 +8,9 @@ const ConflictErr = require('../errors/ConflictErr');
 
 exports.getMovies = async (req, res, next) => {
   try {
-    const movies = await Movie.find({});
-    return res.status(STATUS_OK).send(movies);
+    const owner = req.user._id;
+    const ownerMovies = await Movie.find({ owner });
+    return res.status(STATUS_OK).send(ownerMovies);
   } catch (err) {
     return next(err);
   }
