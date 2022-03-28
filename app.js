@@ -2,13 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cors = require('cors');
-const { createUser, userLogin } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const movieRoutes = require('./routes/movies');
-const userRoutes = require('./routes/users');
+const routes = require('./routes/index');
 const { ERROR_SERVER } = require('./utils/constants');
-const NotFoundErr = require('./errors/NotFoundErr');
-const { checkUser } = require('./utils/validation');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -19,15 +14,7 @@ app.use(cors());
 
 app.use(requestLogger);
 
-app.post('/signup', checkUser, createUser);
-app.post('/signin', checkUser, userLogin);
-app.use('/users', auth, userRoutes);
-app.use('/movies', auth, movieRoutes);
-
-app.use(auth, () => {
-  throw new NotFoundErr('Запрашиваемый ресурс не найден');
-});
-
+app.use(routes);
 app.use(errorLogger);
 app.use(errors());
 
