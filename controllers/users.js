@@ -5,6 +5,7 @@ const NotFoundErr = require('../errors/NotFoundErr');
 const ConflictErr = require('../errors/ConflictErr');
 const BadRequestErr = require('../errors/BadRequestErr');
 const UnAutorized = require('../errors/UnAutorizedErr');
+const { JWT_CODE } = require('../config');
 
 const {
   STATUS_OK,
@@ -20,20 +21,12 @@ exports.getCurrentUser = async (req, res, next) => {
     }
     return res.status(STATUS_OK).send(user);
   } catch (err) {
-    if (err.name === 'CastError') {
-      return next(new BadRequestErr(`${Object.values(err).map((error) => error).join(', ')}`));
-    }
     return next(err);
   }
 };
 
 exports.createUser = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    const checkUser = await User.findOne({ email });
-    if (checkUser) {
-      throw new ConflictErr('Данный пользователь уже существует!');
-    }
     const user = new User(req.body);
     const hash = await bcrypt.hash(user.password, 10);
     user.password = hash;
@@ -45,13 +38,23 @@ exports.createUser = async (req, res, next) => {
     if (err.name.includes('ValidationError')) {
       return next(new BadRequestErr(`${Object.values(err.errors).map((error) => error.message).join(', ')}`));
     }
+    if (err.code === 11000) {
+      throw new ConflictErr('Данный пользователь уже существует!');
+    }
     return next(err);
   }
 };
 
 exports.updateProfile = async (req, res, next) => {
+  const { name, email } = req.body;
   try {
-    const { name, email } = req.body;
+    const data = await User.find({ email });
+
+    if (data.length === 1) {
+      if (data[0]._id.toString() !== req.user._id) {
+        throw new ConflictErr(`Почтовый ящик ${email} принадлежит другому пользователю`);
+      }
+    }
     const updateUser = await User.findByIdAndUpdate(
       req.user._id,
       { name, email },
@@ -76,13 +79,12 @@ exports.userLogin = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const { NODE_ENV, JWT_SECRET } = process.env;
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', {
+      const token = jwt.sign({ _id: user._id }, JWT_CODE, {
         expiresIn: '7d',
       });
       res.send({ token });
     })
     .catch(() => {
-      next(new UnAutorized('Данный пользователь не авторизован'));
+      next(new UnAutorized('Неправильная почта или пароль'));
     });
 };

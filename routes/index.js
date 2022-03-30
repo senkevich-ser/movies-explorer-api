@@ -3,11 +3,11 @@ const auth = require('../middlewares/auth');
 const movieRoutes = require('./movies');
 const userRoutes = require('./users');
 const NotFoundErr = require('../errors/NotFoundErr');
-const { checkUser } = require('../utils/validation');
+const { checkUser, checkUserLogin } = require('../utils/validation');
 const { createUser, userLogin } = require('../controllers/users');
 
 routes.post('/signup', checkUser, createUser);
-routes.post('/signin', checkUser, userLogin);
+routes.post('/signin', checkUserLogin, userLogin);
 
 routes.use(auth);
 

@@ -1,32 +1,29 @@
 const express = require('express');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cors = require('cors');
+const limiter = require('./middlewares/ratelimiter');
 const routes = require('./routes/index');
-const { ERROR_SERVER } = require('./utils/constants');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const { PORT = 3000 } = process.env;
+const { MONGO_DB, PORT } = require('./config');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
+app.use(helmet());
 app.use(express.json());
 app.use(cors());
 
 app.use(requestLogger);
 
+app.use(limiter);
 app.use(routes);
-app.use(errorLogger);
 app.use(errors());
-
-app.use((err, req, res, next) => {
-  const { statusCode = ERROR_SERVER, message } = err;
-  const errorMessage = (statusCode === ERROR_SERVER) ? 'Ошибка на сервере' : message;
-  res.status(statusCode).send({ message: errorMessage });
-  next();
-});
+app.use(errorLogger);
+app.use(errorHandler);
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+  await mongoose.connect(MONGO_DB, {
     useNewUrlParser: true,
   });
   await app.listen(PORT);

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UnAutorized = require('../errors/UnAutorizedErr');
+const { JWT_CODE } = require('../config');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -12,8 +13,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    const { NODE_ENV, JWT_SECRET } = process.env;
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : "some-secret-key");
+    payload = jwt.verify(token, JWT_CODE);
   } catch (err) {
     throw new UnAutorized('Необходима авторизация');
   }
