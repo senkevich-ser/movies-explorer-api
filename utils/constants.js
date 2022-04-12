@@ -1,0 +1,10 @@
+exports.MODE_DEV = 'development';
+exports.MONGO_URL = 'mongodb://localhost:27017/moviesdb';
+exports.LOCAL_PORT = 3000;
+exports.JWT_KEY = 'secret-key';
+exports.STATUS_OK = 200;
+exports.STATUS_CREATED = 201;
+exports.STATUS_ACCEPTED = 202;
+exports.ERROR_SERVER = 500;
+exports.BAD_REQUEST = 400;
+exports.NOT_FOUND = 404;
