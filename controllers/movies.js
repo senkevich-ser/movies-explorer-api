@@ -82,7 +82,7 @@ exports.deleteMovie = async (req, res, next) => {
     if (deleteMovie) {
       return res
         .status(STATUS_OK)
-        .send({ message: `Карточка фильма: ${deleteMovie._id} удалена` });
+        .send({ deletedCard: deleteMovie });
     }
     throw new NotFoundErr('Данные не найдены');
   } catch (err) {
