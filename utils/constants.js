@@ -1,5 +1,5 @@
 exports.MODE_DEV = 'development';
-exports.MONGO_URL = 'mongodb://localhost:27017/moviesdb2';
+exports.MONGO_URL = 'mongodb://localhost:27017/moviesdb';
 exports.LOCAL_PORT = 3000;
 exports.JWT_KEY = 'secret-key';
 exports.STATUS_OK = 200;
