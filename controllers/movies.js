@@ -4,7 +4,7 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/constants');
 const BadRequestErr = require('../errors/BadRequestErr');
 const NotFoundErr = require('../errors/NotFoundErr');
 const ForBiddenErr = require('../errors/ForbiddenErr');
-const ConflictErr = require('../errors/ConflictErr');
+/* const ConflictErr = require('../errors/ConflictErr'); */
 
 exports.getMovies = async (req, res, next) => {
   try {
@@ -31,11 +31,11 @@ exports.createMovie = async (req, res, next) => {
     movieId,
   } = req.body;
   try {
-    const data = await Movie.find({ movieId });
+    /* const data = await Movie.find({ movieId });
 
     if (data.length > 0) {
       throw new ConflictErr(`Карточка с movieId:${movieId} уже существует`);
-    }
+    } */
     const newMovie = await Movie.create({
       country,
       director,
@@ -82,7 +82,7 @@ exports.deleteMovie = async (req, res, next) => {
     if (deleteMovie) {
       return res
         .status(STATUS_OK)
-        .send({ message: `Карточка фильма: ${deleteMovie._id} удалена` });
+        .send(deleteMovie);
     }
     throw new NotFoundErr('Данные не найдены');
   } catch (err) {

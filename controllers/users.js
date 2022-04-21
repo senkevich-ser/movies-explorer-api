@@ -39,7 +39,7 @@ exports.createUser = async (req, res, next) => {
       return next(new BadRequestErr(`${Object.values(err.errors).map((error) => error.message).join(', ')}`));
     }
     if (err.code === 11000) {
-      throw new ConflictErr('Данный пользователь уже существует!');
+      return next(new ConflictErr('Данный пользователь уже существует!'));
     }
     return next(err);
   }
